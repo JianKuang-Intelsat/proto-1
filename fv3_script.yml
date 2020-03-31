@@ -1,0 +1,116 @@
+ccpp: True
+quilting: True
+grid_gen_method: JPgrid
+grid_name: GSD_HRRR25km
+print_esmf: False
+nhours_fcst: 36
+
+# Variables
+res:
+tile_rgnl:
+
+nh4:
+nh3:
+
+
+# Paths
+paths:
+  fixsar:
+  fixam:
+  input:
+  ccpp_phys_suite:
+  fv3_exec:
+
+diag_table:
+  jinja:
+    - cycle_time
+    - res
+field_table:
+input.nml:
+model_config:
+  - !compute_pe_member pe_member01
+  - !load_from [dt_atmos, grid]
+  - !start_times [year, month, day, hour]
+  - !load_from [nhours_fcst]
+  - !load_from [ncores_per_node, machine]
+  - !load_from [quilting]   # Sets quilting = bool
+  - !load_from [quilting, grid] # Sets all items from grid.quilting section in list
+  - !load_from [print_esmf]
+
+# !load_from checks value of first item, then grabs the value/section
+#     from second item.
+#     To add the first item/value to the list, a separate call to load_from should be made.
+# !compute_pe_member sets the number of MPI tasks for the forecast.
+# !start_times loads the list items as individual dict entries prepended with
+#     start_
+#
+
+
+nems_config:
+
+
+
+machines:
+  wcoss:
+    run_command: 'mpirun -np {np}'
+    ncores_per_node: ''
+    dirs:
+      fixgsm: "/gpfs/hps3/emc/global/noscrub/emc.glopara/git/fv3gfs/fix/fix_am"
+      sfc_climo_input_dir: "/scratch1/NCEPDEV/da/George.Gayno/ufs_utils.git/climo_fields_netcdf"
+
+  hera:
+    run_command: srun
+    ncores_per_nod: 24
+    sched: slurm
+    dirs:
+      fixgsm: "/scratch1/NCEPDEV/global/glopara/fix/fix_am"
+      sfc_climo_input_dir: "/scratch1/NCEPDEV/da/George.Gayno/ufs_utils.git/climo_fields_netcdf"
+
+
+cycledep:
+  link: # Format: [source, [target]] - If no target supplied, file keeps its source name]
+    input:
+      - ['gfs_data.tile{n.tile_rgnl}.halo${n.nh0}.nc', gfs_data.nc]
+      - ['sfc_data.tile{n.tile_rgnl}.halo${n.nh0}.nc', sfc_data.nc]
+
+static:
+  copy: # Format: [source, [target]] - If no target supplied, file keeps its source name
+    fv3_exec:
+      - [fv3_gfs.x]
+
+  link: # Format: [source, [target]] - If no target supplied, file keeps its source name]
+    fixsar:
+      - ['C{n.res}_mosaic.nc', grid_spec.nc]
+      - ['C{n.res}_grid.tile{tile_rgnl}.halo{n.nh3}', 'C{n.cres}_grid.tile{n.tile_rgnl}.nc']
+      - ['C{n.res}_grid.tile{tile_rgnl}.halo{n.nh4}', 'C{n.cres}_grid.tile{n.tile_rgnl}.halo{n.nh4}.nc']
+      - ['C{n.res}_oro_data.tile{tile_rgnl}.halo{n.nh0}', oro_data.nc]
+      - ['C{n.res}_oro_data.tile{tile_rgnl}.halo{n.nh4}', 'oro_data.tile{tile_rgnl}.halo{n.nh4}.nc']
+    fixam:
+      - [global_climaeropac_global.txt]
+      - [global_h2o_pltc.f77]
+      - [global_zorclim.1x1.grb]
+      - [global_sfc_emissivity_idx.txt]
+      - [global_solarconstant_noaa_an.txt]
+      - [fix_co2_proj/global_co2historicaldata_2010.txt]
+      - [fix_co2_proj/global_co2historicaldata_2011.txt]
+      - [fix_co2_proj/global_co2historicaldata_2012.txt]
+      - [fix_co2_proj/global_co2historicaldata_2013.txt]
+      - [fix_co2_proj/global_co2historicaldata_2014.txt]
+      - [fix_co2_proj/global_co2historicaldata_2015.txt]
+      - [fix_co2_proj/global_co2historicaldata_2016.txt]
+      - [fix_co2_proj/global_co2historicaldata_2017.txt]
+      - [fix_co2_proj/global_co2historicaldata_2018.txt]
+      - [global_co2historicaldata_glob.txt]
+      - [co2monthlycyc.txt]
+      - !namsfcfiles
+    source:
+      - ['{n.paths.ccpp_phys_suite}/suite_{n.ccpp_phys_suite}.xml']
+
+
+
+
+
+
+
+
+
