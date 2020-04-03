@@ -1,5 +1,10 @@
+#pylint: disable=invalid-name
+
 import argparse
+import datetime as dt
 import os
+
+import yaml
 
 def config_exists(arg):
 
@@ -66,11 +71,11 @@ def to_datetime(arg):
     arg_len = len(arg)
 
     if arg_len not in [10, 12, 14]:
-        msg = f'{value} does not conform to input format YYYYMMDDHH[MM[SS]]'
+        msg = f'{arg} does not conform to input format YYYYMMDDHH[MM[SS]]'
         raise argparse.ArgumentTypeError(msg)
 
     # Use a subset of the string corresponding to the input length of the string
     # 2 chosen here since Y is a 4 char year.
-    date_format = '%Y%m%d%H%M%S'[0:val_len-2]
+    date_format = '%Y%m%d%H%M%S'[0:arg_len-2]
 
-    return dt.datetime.strptime(value, date_format)
+    return dt.datetime.strptime(arg, date_format)

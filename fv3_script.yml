@@ -1,12 +1,16 @@
 ccpp: True
-quilting: True
+quilting: &quilting True
 grid_gen_method: JPgrid
 grid_name: GSD_HRRR25km
 print_esmf: False
 nhours_fcst: 36
+restart_interval: 0
+phys_pkg: FV3_GSD_v0
+
+machine: hera
 
 # Variables
-res:
+res: 3343
 tile_rgnl:
 
 nh4:
@@ -15,27 +19,42 @@ nh3:
 
 # Paths
 paths:
-  fixsar:
+  fixsar: 
   fixam:
   input:
   ccpp_phys_suite:
   fv3_exec:
+  grid: /Users/christina.holt/Work/proto-1/fv3_grids.yml
+  machine: /Users/christina.holt/Work/proto-1/machines.yml
+  diag_tmpl: '/Users/christina.holt/Work/proto-1/templates/fv3_diag_table.{n.phys_pkg}'
+  base_nml: '/Users/christina.holt/Work/proto-1/templates/input.nml.FV3'
 
-diag_table:
-  jinja:
-    - cycle_time
-    - res
 field_table:
 input.nml:
 model_config:
-  - !compute_pe_member pe_member01
-  - !load_from [dt_atmos, grid]
-  - !start_times [year, month, day, hour]
-  - !load_from [nhours_fcst]
-  - !load_from [ncores_per_node, machine]
-  - !load_from [quilting]   # Sets quilting = bool
-  - !load_from [quilting, grid] # Sets all items from grid.quilting section in list
-  - !load_from [print_esmf]
+  # List of items to include in the model_config. Possible items can be a string
+  # referencing a method in the Forecast class, or a key: value pair. If the
+  # value of the key: value pair is one of (grid, config, machine), then the
+  # resulting value in the model_config file will be the value of the key set in
+  # those configuration files.
+  - pe_member01
+  - dt_atmos: grid
+  - start_times
+  - nhours_fcst: config
+  - ncores_per_node: machine
+  - quilting
+  - print_esmf: config
+  - total_member: 1
+  - RUN_CONTINUE: '.false.'
+  - ENS_SPS: '.false.'
+  - cpl: '.false.'
+  - calendar: 'julian'
+  - memuse_verbose: '.false.'
+  - atmos_nthreads: 2
+  - use_hyper_thread: '.false.'
+  - debug_affinity: '.true.'
+  - restart_interval: config
+  - output_1st_tstep_rst: '.false.'
 
 # !load_from checks value of first item, then grabs the value/section
 #     from second item.
@@ -47,25 +66,6 @@ model_config:
 
 
 nems_config:
-
-
-
-machines:
-  wcoss:
-    run_command: 'mpirun -np {np}'
-    ncores_per_node: ''
-    dirs:
-      fixgsm: "/gpfs/hps3/emc/global/noscrub/emc.glopara/git/fv3gfs/fix/fix_am"
-      sfc_climo_input_dir: "/scratch1/NCEPDEV/da/George.Gayno/ufs_utils.git/climo_fields_netcdf"
-
-  hera:
-    run_command: srun
-    ncores_per_nod: 24
-    sched: slurm
-    dirs:
-      fixgsm: "/scratch1/NCEPDEV/global/glopara/fix/fix_am"
-      sfc_climo_input_dir: "/scratch1/NCEPDEV/da/George.Gayno/ufs_utils.git/climo_fields_netcdf"
-
 
 cycledep:
   link: # Format: [source, [target]] - If no target supplied, file keeps its source name]
@@ -81,10 +81,10 @@ static:
   link: # Format: [source, [target]] - If no target supplied, file keeps its source name]
     fixsar:
       - ['C{n.res}_mosaic.nc', grid_spec.nc]
-      - ['C{n.res}_grid.tile{tile_rgnl}.halo{n.nh3}', 'C{n.cres}_grid.tile{n.tile_rgnl}.nc']
-      - ['C{n.res}_grid.tile{tile_rgnl}.halo{n.nh4}', 'C{n.cres}_grid.tile{n.tile_rgnl}.halo{n.nh4}.nc']
-      - ['C{n.res}_oro_data.tile{tile_rgnl}.halo{n.nh0}', oro_data.nc]
-      - ['C{n.res}_oro_data.tile{tile_rgnl}.halo{n.nh4}', 'oro_data.tile{tile_rgnl}.halo{n.nh4}.nc']
+      - ['C{n.res}_grid.tile{n.tile_rgnl}.halo{n.nh3}', 'C{n.cres}_grid.tile{n.tile_rgnl}.nc']
+      - ['C{n.res}_grid.tile{n.tile_rgnl}.halo{n.nh4}', 'C{n.cres}_grid.tile{n.tile_rgnl}.halo{n.nh4}.nc']
+      - ['C{n.res}_oro_data.tile{n.tile_rgnl}.halo{n.nh0}', oro_data.nc]
+      - ['C{n.res}_oro_data.tile{n.tile_rgnl}.halo{n.nh4}', 'oro_data.tile{n.tile_rgnl}.halo{n.nh4}.nc']
     fixam:
       - [global_climaeropac_global.txt]
       - [global_h2o_pltc.f77]
@@ -103,8 +103,8 @@ static:
       - [global_co2historicaldata_glob.txt]
       - [co2monthlycyc.txt]
       - !namsfcfiles
-    source:
-      - ['{n.paths.ccpp_phys_suite}/suite_{n.ccpp_phys_suite}.xml']
+    ccpp_phys_suite:
+      - ['suite_{n.ccpp_phys_suite}.xml']
 
 
 
