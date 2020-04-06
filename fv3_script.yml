@@ -19,12 +19,12 @@ nh3:
 
 # Paths
 paths:
-  fixsar: 
-  fixam:
+  workdir: 
+  ushdir:
   input:
   ccpp_phys_suite:
   fv3_exec:
-  grid: /Users/christina.holt/Work/proto-1/fv3_grids.yml
+  grid: '/Users/christina.holt/Work/proto-1/fv3_grids.yml
   machine: /Users/christina.holt/Work/proto-1/machines.yml
   diag_tmpl: '/Users/christina.holt/Work/proto-1/templates/fv3_diag_table.{n.phys_pkg}'
   base_nml: '/Users/christina.holt/Work/proto-1/templates/input.nml.FV3'

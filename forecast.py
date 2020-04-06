@@ -46,7 +46,10 @@ class BatchJob():
         files = []
         for path_name, filelist in links.items():
 
-            path_dir = n.paths.get(path_name)
+            path_dir = n.paths.get(
+                path_name,
+                self.machine['dirs'].get(path_name),
+                )
 
             for src_dst in filelist:
 
