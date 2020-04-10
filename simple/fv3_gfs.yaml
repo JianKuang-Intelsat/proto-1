@@ -1,0 +1,67 @@
+fv3_gfs_settings:
+  CDUMP: gfs
+  CASE: C384
+  LEVS: 65
+  CCPP_SUITE: GFS
+  FHCYC: 24
+  FHCYC_GDAS: 1
+  FHCYC_GFS: 24
+  QUILTING: True
+  WRITE_NEMSIOFILE: YES
+  WRITE_NEMSIOFLIP: yes
+  nst_anl: yes
+  lprecip_accu: yes
+  DONST: YES
+  MONO: "non-mono"
+  MEMBER: -1
+  d4_bg: 0.15
+  dddmp: 0.2
+  ISEED: 0
+  SEEDLET: 1
+  SET_STP_SEED: YES
+  DO_SHUM: false
+  DO_SKEB: false
+  DO_SPPT: false
+
+  RUN_EFCSGRP: NO
+  zhao_mic: YES
+  nh_type: 'nh'
+  USE_COUPLER_RES: NO
+  cdmbgwd:
+      C48:  "0.071,2.1,1.0,1.0"
+      C96:  "0.14,1.8,1.0,1.0"
+      C192: "0.23,1.5,1.0,1.0"
+      C384: "1.1,0.72,1.0,1.0"
+      C768: "4.0,0.15,1.0,1.0"
+      C1152: "4.0,0.10,1.0,1.0"
+      C3072: "4.0,0.05,1.0,1.0"
+
+  DELTIM:
+      C384: 240
+      C768: 225
+      C1152: 150
+      C3072: 90
+
+  OCNTIM: 1800
+
+  new_o3force: yes
+  h2o_phys: yes
+  do_vort_damp: yes
+  cnvcld: true
+  consv_te: 1.
+  fv_sg_adj: 450
+  dspheat: YES
+  shal_cnv: YES
+  agrid_vel_rst: yes
+  IEMS: 1
+  IALB: 1
+  ISOL: 2
+  IAER: 111
+  ICO2: 2
+  warm_start: true
+  read_increment: no
+  restart_interval: 6
+  imp_physics: "11"
+           
+  OCNPETS: 120
+  ICEPETS: 48

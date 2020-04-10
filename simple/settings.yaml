@@ -1,0 +1,50 @@
+# Do not change this file unless you know what you're doing.  It sets
+# default values for the "settings" section.  You probably want to
+# override the settings in the case file instead.
+
+default_settings: &default_settings
+  # rocoto_log_path: sets the stdout/stderr log path for batch jobs
+  # when using Rocoto.  This is inserted in the <join> tag of the
+  # task's <task> tag.
+  rocoto_task_throttle: 16  
+  rocoto_cycle_throttle: 2
+
+  max_job_tries: 2
+  dev_safeguards: true
+
+  # REALTIME and realtime - an alias that should be removed once we're
+  # sure it is consistent among the yaml files:
+  realtime: NO
+  run_vrfy_jobs: true
+
+  four_cycle_mode: NO
+  nco_mode: NO
+  use_nco_ecflow_headers: NO
+  print_esmf: .false.
+  ecflow_real_clock: no
+  ecflow_virtual_clock: no
+  ecflow_hybrid_clock: no
+
+  gfs_cyc: 4
+  nems_temp: 'atm'
+  nems_temp_cold: 'atm'
+  ics_from: opsgfs
+
+  parexp: prnemsrn
+
+  cplflx: .false.
+  cpl: .false.
+
+  DOIAU: NO
+  IAUFHRS: 6
+  IAU_DELTHRS: 6
+
+  KEEPDATA: NO
+  DUMP_SUFFIX: ""
+  run_gsi: No
+  chgres_and_convert_ics: Yes
+
+  # awips setting
+  NAWIPSGRP: 21
+
+  ecflow_totality_limit: yes

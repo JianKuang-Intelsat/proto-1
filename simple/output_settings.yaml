@@ -1,0 +1,28 @@
+# This file sets default values for the GFS output settings.  See
+# schema/output.yaml for documentation.
+
+output_settings_settings:
+  FHMIN_GFS: 0
+  FHMAX_GFS: 384
+  FHOUT_GFS: 3
+  FHMIN_ENKF: 3
+  FHMAX_ENKF: 9
+  FHOUT_ENKF: 1
+  FHMIN_GDAS: 0
+  FHMAX_GDAS: 9
+  FHOUT_GDAS: 3
+
+  FHMAX_HF_GFS: 0
+  FHOUT_HF_GFS: 1
+  OCN_INTERVAL: 120
+
+  NCO_NAMING_CONV: YES
+  OUTPUT_FILE_TYPE: nemsio
+  OUTPUT_GRID: gaussian_grid
+
+  gdas_forecast_hours: [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 ]
+  ocnpost_hours: [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 ]
+  enkf_epos_fhr: [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 ]
+  wafs_last_hour: 120
+  awips_g2_hours: [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 ]
+  awips_20km_1p0_hours: [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 ]

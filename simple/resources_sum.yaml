@@ -1,0 +1,167 @@
+resources_sum:
+  run_anal:
+  - OMP_NUM_THREADS: 14
+    batch_memory: 3072M
+    exe: placeholder
+    max_ppn: 6
+    memory_per_rank: null
+    mpi_ranks: 144
+    walltime: !timedelta '02:30:00'
+  run_arch:
+  - batch_memory: 3072M
+    max_ppn: 1
+    mpi_ranks: 1
+    walltime: !timedelta '06:00:00'
+  run_awips:
+  - batch_memory: 254M
+    max_ppn: 4
+    mpi_ranks: 4
+    walltime: !timedelta '02:00:00'
+  run_big_downstream:
+  - OMP_NUM_THREADS: 1
+    batch_memory: 3072M
+    max_ppn: 1
+    mpi_ranks: 2
+    walltime: !timedelta '00:30:00'
+  run_coupled_fcst:
+  - OMP_NUM_THREADS: 2
+    batch_memory: 1024M
+    max_ppn: 24
+    memory_per_rank: null
+    mpi_ranks: 480
+    walltime: !timedelta '08:00:00'
+  run_coupled_medcold:
+  - OMP_NUM_THREADS: 2
+    batch_memory: 1024M
+    max_ppn: 24
+    memory_per_rank: null
+    mpi_ranks: 480
+    walltime: !timedelta '00:30:00'
+  run_dump_waiter:
+  - batch_memory: 300M
+    max_ppn: 1
+    mpi_ranks: 1
+    walltime: !timedelta '01:00:00'
+  run_dwn: 
+  - OMP_NUM_THREADS: 1
+    mpi_ranks: 24
+  run_earc:
+  - batch_memory: 3072M
+    max_ppn: 1
+    mpi_ranks: 1
+    walltime: !timedelta '06:00:00'
+  run_ecen:
+  - OMP_NUM_THREADS: 2
+    batch_memory: 3072M
+    exe: placeholder
+    max_ppn: 12
+    memory_per_rank: null
+    mpi_ranks: 84
+    walltime: !timedelta '00:30:00'
+  run_efcs:
+  - batch_memory: 254M
+    max_ppn: 40
+    mpi_ranks: 192
+    walltime: !timedelta '00:30:00'
+  run_eobs:
+  - OMP_NUM_THREADS: 4
+    batch_memory: 3072M
+    exe: placeholder
+    max_ppn: 6
+    memory_per_rank: null
+    mpi_ranks: 72
+    walltime: !timedelta '00:15:00'
+  run_eomg:
+  - OMP_NUM_THREADS: 2
+    batch_memory: 3072M
+    exe: placeholder
+    max_ppn: 6
+    memory_per_rank: null
+    mpi_ranks: 72
+    walltime: !timedelta '00:30:00'
+  run_epos:
+  - OMP_NUM_THREADS: 2
+    batch_memory: 254M
+    exe: placeholder
+    max_ppn: 12
+    memory_per_rank: null
+    mpi_ranks: 84
+    walltime: !timedelta '00:30:00'
+  run_eupd:
+  - OMP_NUM_THREADS: 4
+    batch_memory: 3072M
+    exe: placeholder
+    max_ppn: 12
+    memory_per_rank: null
+    mpi_ranks: 120
+    walltime: !timedelta '00:30:00'
+  run_final:
+  - batch_memory: 1024M
+    max_ppn: 1
+    mpi_ranks: 1
+    walltime: !timedelta '00:01:00'
+  run_fv3ic:
+  - batch_memory: 3072M
+    max_ppn: 24
+    mpi_ranks: 24
+    walltime: !timedelta '00:30:00'
+  run_gdasfcst:
+  - batch_memory: 1024M
+    max_ppn: 24
+    mpi_ranks: 288
+    walltime: !timedelta '00:15:00'
+  run_gdaspost:
+  - OMP_NUM_THREADS: 1
+    batch_memory: 3072M
+    exe: placeholder
+    max_ppn: 12
+    memory_per_rank: null
+    mpi_ranks: 72
+    walltime: !timedelta '00:30:00'
+  run_gfsfcst:
+  - batch_memory: 1024M
+    max_ppn: 24
+    mpi_ranks: 312
+    walltime: !timedelta '08:00:00'
+  run_gfspost:
+  - OMP_NUM_THREADS: 1
+    batch_memory: 3072M
+    exe: placeholder
+    max_ppn: 12
+    memory_per_rank: null
+    mpi_ranks: 72
+    walltime: !timedelta '00:10:00'
+  run_gfsvrfy:
+  - OMP_NUM_THREADS: null
+    batch_memory: 3072M
+    compute_memory: 16384M
+    exe: placeholder
+    max_ppn: 1
+    mpi_ranks: 5
+    walltime: !timedelta '03:00:00'
+  run_make_next_cycles:
+  - batch_memory: 600M
+    walltime: !timedelta '00:15:00'
+  run_postsnd:
+  - batch_memory: 254M
+    max_ppn: 3
+    mpi_ranks: 12
+    walltime: !timedelta '04:00:00'
+  run_prep:
+  - OMP_NUM_THREADS: null
+    batch_memory: 3072M
+    exe: placeholder
+    max_ppn: 12
+    memory_per_rank: null
+    mpi_ranks: 12
+    walltime: !timedelta '00:15:00'
+  run_prepbufr:
+  - batch_memory: 3072M
+    max_ppn: 4
+    mpi_ranks: 4
+    walltime: !timedelta '00:15:00'
+  run_sfc_prep:
+  - batch_memory: 1024M
+    max_ppn: 1
+    mpi_ranks: 1
+    walltime: !timedelta '00:02:00'

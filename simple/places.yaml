@@ -1,0 +1,20 @@
+# This file sets default values for data and executable locations.
+# See the schema/places.yaml for details.
+places:
+  EXPROOT: "/work/noaa/marine/Jian.Kuang/expdir"
+  HOMEgfs: "/work/noaa/marine/Jian.Kuang/ccpp-scripts"
+  HOMEobsproc_prep: "/gpfs/hps3/emc/global/noscrub/emc.glopara/git/obsproc/obsproc_global.v3.2.3"
+  HOMEobsproc_network: "/gpfs/hps3/emc/global/noscrub/emc.glopara/git/obsproc/obsproc_global.v3.2.3"
+
+  NWPROD: "/gpfs/hps/nco/ops/nwprod"
+  DMPDIR: "/work/noaa/marine/Jian.Kuang/comroot"
+
+  EXPDIR: "/work/noaa/marine/Jian.Kuang/expdir/oriontest"
+  ROTDIR: "/work/noaa/marine/Jian.Kuang/comroot/oriontest"
+  MOM6IC: "/scratch4/NCEPDEV/nems/noscrub/Bin.Li/FROM_HPSS"
+
+  ics_from: opsgfs
+  parexp: prnemsrn
+  HPSS_PAR_PATH: "/5year/NCEPDEV/emc-global/emc.glopara/WCOSS_C/prnemsrn"
+
+  rocoto_workflow_xml: '/work/noaa/marine/Jian.Kuang/expdir/oriontest/workflow.xml'
