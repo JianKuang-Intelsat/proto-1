@@ -1,0 +1,12 @@
+grid_name: GSD_HRRR25km
+nhours_fcst: 12
+phys_pkg: FV3_GSD_SAR
+
+paths:
+  fv3_model: '/scratch2/BMC/wrfruc/cholt/repos/regional_workflow.crh/sorc/ufs_weather_model'
+  homerrfs: '/scratch2/BMC/wrfruc/cholt/repos/proto-1'
+  exptdir: '/scratch2/BMC/wrfruc/cholt/test_proto'
+  ushdir: '/scratch2/BMC/wrfruc/cholt/repos/proto-1'
+  input: '/scratch2/BMC/wrfruc/cholt/repos/expt_dirs/regional_004/{starttime}/INPUT'
+
+machine: hera

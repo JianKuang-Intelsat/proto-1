@@ -79,7 +79,7 @@ def main(cla):
 
     script_config = cla.script_config
     if not script_config:
-        ushdir = os.path.join(user_config['paths']['homerrfs'], 'ush')
+        ushdir = os.path.join(user_config['paths']['homerrfs'], 'configs')
         script_config = checks.load_config_file(
             os.path.join(ushdir, 'fv3_script.yml')
             )

@@ -5,24 +5,21 @@ print_esmf: False
 nhours_fcst: 36
 restart_interval: 0
 
-# Variables
 halo_boundary: 4
-
 
 # Paths
 paths:
-  ushdir: '{n.homerrfs}'
+  ushdir: '{n.homerrfs}/ush'
   workdir: '{n.exptdir}/{cycle}'
-  ccpp_phys_suite: '{n.homerrfs}/ush'
-  fv3_exec: '{n.homerrfs}/sorc/'
-  grid: '{n.ushdir}/fv3_grids.yml'
-  machine: '{n.ushdir}/fv3_grids.yml'
-  namelist: '{n.ushdir}/fv3_nml.yml'
-  diag_tmpl: '{n.ushdir}/templates/fv3_diag_table.{n.phys_pkg}'
-  base_nml: '{n.ushdir}/templates/input.nml.FV3'
+  templates: '{n.ushdir}/templates'
+  ccpp_phys_suite: '{n.homerrfs}/FV3/ccpp/suites'
+  fv3_exec: '{n.fv3_model}/tests'
+  grid: '{n.configdir}/fv3_grids.yml'
+  machine: '{n.configdir}/fv3_grids.yml'
+  namelist: '{n.configdir}/fv3_nml.yml'
+  diag_tmpl: '{n.templates}/templates/fv3_diag_table.{n.phys_pkg}'
+  base_nml: '{n.templates}/templates/input.nml.FV3'
 
-field_table:
-input.nml:
 model_config:
   # List of items to include in the model_config. Possible items can be a string
   # referencing a method in the Forecast class, or a key: value pair. If the
@@ -47,17 +44,6 @@ model_config:
   - debug_affinity: '.true.'
   - restart_interval: config
   - output_1st_tstep_rst: '.false.'
-
-# !load_from checks value of first item, then grabs the value/section
-#     from second item.
-#     To add the first item/value to the list, a separate call to load_from should be made.
-# !compute_pe_member sets the number of MPI tasks for the forecast.
-# !start_times loads the list items as individual dict entries prepended with
-#     start_
-#
-
-
-nems_config:
 
 cycledep:
   link: # Format: [source, [target]] - If no target supplied, file keeps its source name]
@@ -94,15 +80,10 @@ static:
       - [fix_co2_proj/global_co2historicaldata_2018.txt]
       - [global_co2historicaldata_glob.txt]
       - [co2monthlycyc.txt]
-      - !namsfcfiles
     ccpp_phys_suite:
       - ['suite_{n.ccpp_phys_suite}.xml']
-
-
-
-
-
-
-
-
+    templates:
+      - ['field_table.{n.phys_pkg}', field_table]
+      - [nems.configure]
+      - [data_table]
 

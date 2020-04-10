@@ -30,7 +30,7 @@
 /
 
 &fv_grid_nml
-     grid_file = 'INPUT/grid_spec.nc'
+     grid_file = 'grid_spec.nc'
 /
 
 &fv_core_nml

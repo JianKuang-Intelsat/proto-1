@@ -1,9 +1,0 @@
-grid_name: GSD_HRRR25km
-nhours_fcst: 12
-phys_pkg: FV3_GSD_SAR
-
-paths:
-  homerrfs: '/Users/christina.holt/Work/proto-1'
-  exptdir: '/Users/christina.holt/Work/test_proto-1'
-
-machine: hera

@@ -75,15 +75,19 @@ class BatchJob():
                 self.machine.dirs.__dict__.get(path_name),
                 )
 
+            if not path_dir:
+                msg = f'stage_files: cannot find a path entry for {path_name}'
+                raise ValueError(msg)
+
             for src_dst in filelist:
 
                 # First item of list will be the name of the source. Join with
                 # the path specified by the section header.
                 filepath = os.path.join(path_dir, src_dst[0])
 
-                # Last item of list will be the name of the link
-                link_name = os.path.basename(src_dst[-1])
-                destination = os.path.join(self.workdir, link_name)
+                # Last item of list will be the name of the destination
+                dest_name = os.path.basename(src_dst[-1])
+                destination = os.path.join(self.workdir, dest_name)
 
                 # Add the processed src_dst to the filelist
                 files.append((filepath, destination))
@@ -204,7 +208,10 @@ class Forecast(BatchJob):
                 # the value does not reference a local variable, then set it to
                 # the value provided in the config.
                 for key, value in item.items():
-                    var_val = locals().get(value).get(key)
+                    var_val = locals().get(value).__dict__.get(key)
+                    value = var_val if var_val else value
+                    value = f'.{str(value).lower()}' if isinstance(value, bool) else value
+
                     model_config[key] = var_val if var_val else value
 
             else: # item is a single item string
