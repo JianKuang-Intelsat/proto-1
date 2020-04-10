@@ -49,6 +49,7 @@ def safe_link(src, dst):
     os.symlink(src, dst)
 
 def update_dict(base, updates, quiet=False):
+
     '''
     Overwrites all values in base dictionary with values from updates. Turn off
     print statements with queit=True.
@@ -66,6 +67,9 @@ def update_dict(base, updates, quiet=False):
     Result:
         The base dict is updated in place.
     '''
+
+    if not updates:
+        return
 
     for sect, values in updates.items():
         # If section is set to None, remove all contents from namelist

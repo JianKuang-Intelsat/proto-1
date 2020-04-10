@@ -6,7 +6,17 @@ import os
 
 import yaml
 
-def config_exists(arg):
+def file_exists(arg):
+
+    ''' Checks whether a file exists, and returns the path if it does. '''
+
+    if not os.path.exists(arg):
+        msg = f'{arg} does not exist!'
+        raise argparse.ArgumentTypeError(msg)
+
+    return arg
+
+def load_config_section(arg):
 
     '''
     Checks whether the config file exists and if it contains the input
@@ -24,37 +34,34 @@ def config_exists(arg):
     with open(file_name, 'r') as fn:
         cfg = yaml.load(fn, Loader=yaml.SafeLoader)
 
+    err_msg = 'Section {section_name} does not exist in top level of {file_name}'
     if section_name:
-        try:
-            cfg = cfg[section_name]
-        except KeyError:
-            msg = f'Section {section_name} does not exist in top level of {file_name}'
-            raise argparse.ArgumentTypeError(msg)
+        if isinstance(section_name, str):
+            section_name = [section_name]
+
+        # Support multi-layer configurations and single level
+        for sect in section_name:
+            try:
+                cfg = cfg[sect]
+            except KeyError:
+                try:
+                    cfg = cfg[sect.lower()]
+                except:
+                    raise KeyError(err_msg.format(sect, file_name))
 
     return cfg
 
-def file_exists(arg):
-
-    ''' Checks whether a file exists, and returns the path if it does. '''
-
-    if not os.path.exists(arg):
-        msg = f'{arg} does not exist!'
-        raise argparse.ArgumentTypeError(msg)
-
-    return arg
-
-def load_config(arg):
+def load_config_file(arg):
 
     '''
     Check to ensure that the provided config file exists. If it does, load it
-    with YAML's safe loader and return the resulting dict.
+    with YAML's safe loader and return the corresponding Python dict.
     '''
 
     # Check for existence of file
-    if not os.path.exists(arg):
-        msg = f'{arg} does not exist!'
-        raise argparse.ArgumentTypeError(msg)
+    arg = file_exists(arg)
 
+    # Load the yaml config and return the Python dict
     return yaml.safe_load(arg)
 
 def load_str(arg):

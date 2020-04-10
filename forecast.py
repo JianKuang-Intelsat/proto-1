@@ -3,23 +3,27 @@
 from argparse import Namespace
 import os
 import shlex
+import shutil
 import subprocess
 
 import jinja2 as j2
 import yaml
 
 import f90nml
+
+import errors
 import utils
 
 class BatchJob():
 
-    def __init__(self, config, machine, workdir):
-
+    def __init__(self, config, machine, starttime, **kwargs):
 
         self.config = self.config_namespace(config)
+        self.machine = self.config_namespace(machine)
+        self.starttime = starttime
 
-        self.machine = machine
-        self.workdir = workdir
+        overwrite = kwargs.get('overwrite', False)
+        self.workdir = self.create_workdir(overwrite)
 
     @staticmethod
     def config_namespace(config):
@@ -27,6 +31,26 @@ class BatchJob():
         ns = Namespace()
         utils.namespace(ns, config)
         return ns
+
+    def create_workdir(self, overwrite=True):
+
+        cycle = self.starttime.strftime('%Y%m%d%H')
+
+        workdir = self.config.paths.workdir.format(
+            n=self.config.paths,
+            cycle=cycle
+            )
+
+        if os.path.exists(workdir):
+            if overwrite:
+                shutil.rmtree(workdir)
+            else:
+                msg = f"create_workdir: {workdir} exists & will not be removed!"
+                raise errors.DirectoryExists(msg)
+
+        os.makedirs(workdir)
+
+        return workdir
 
     def stage_files(self, action, links):
 
@@ -46,9 +70,9 @@ class BatchJob():
         files = []
         for path_name, filelist in links.items():
 
-            path_dir = n.paths.get(
+            path_dir = n.paths.__dict__.get(
                 path_name,
-                self.machine['dirs'].get(path_name),
+                self.machine.dirs.__dict__.get(path_name),
                 )
 
             for src_dst in filelist:
@@ -111,16 +135,15 @@ class BatchJob():
 
 class Forecast(BatchJob):
 
-    def __init__(self, config, grid, machine, nml, starttime, workdir):
+    def __init__(self, config, machine, starttime, **kwargs):
 
-        BatchJob.__init__(self, config, machine, workdir)
+        BatchJob.__init__(self, config, machine, starttime, **kwargs)
 
         # Set of configuration Namespace objects.
-        self.grid = grid
-        self.nml = nml
+        self.grid = self.config_namespace(kwargs.get('grid'))
+        self.nml = self.config_namespace(kwargs.get('nml'))
 
-        # Starting time for forecast
-        self.starttime = starttime
+
 
     def run(self):
 
@@ -153,7 +176,6 @@ class Forecast(BatchJob):
         self.render_template(outfile, template, template_vars)
 
     def create_model_config(self):
-
 
         # Output file
         model_config_out = os.path.join(self.workdir, 'model_config')
@@ -251,4 +273,4 @@ class Forecast(BatchJob):
         copies = self.config.static.copy
 
         for action in ['copy', 'link']:
-            self.stage_files(action, self.config.static.get(action, {}))
+            self.stage_files(action, self.config.static.__dict__.get(action, {}))
