@@ -28,7 +28,7 @@ def parse_args():
                         type=checks.to_datetime,
                         )
 
-    # Optional
+    # Optional - configure files
     parser.add_argument('-g', '--grid_config',
                         help='Full path to a YAML grids config file, and a \
                         grid name corresponding to the top-level key of \
@@ -61,6 +61,14 @@ def parse_args():
                         help='If included, overwrites the current working \
                         directory. Otherwise, exits on existence of workdir',
                         type=checks.load_config_file,
+                        )
+
+    # Optional - switches
+    parser.add_argument('--dry-run',
+                        action='store_true',
+                        dest='dry_run',
+                        help='Set up a run directory, but don\'t run the \
+                        executable.',
                         )
 
     parser.add_argument('--quiet',
@@ -149,7 +157,7 @@ def main(cla):
 
     # Run the forecast job
     # ---------------------
-    fcst.run()
+    fcst.run(dry_run=cla.dry_run)
 
 if __name__ == '__main__':
     CLARGS = parse_args()

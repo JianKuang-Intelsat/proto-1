@@ -149,7 +149,7 @@ class Forecast(BatchJob):
 
 
 
-    def run(self):
+    def run(self, dry_run=False):
 
         # Create workdir (currently handled by J-JOB, is that NCO-necessary?)
 
@@ -167,7 +167,8 @@ class Forecast(BatchJob):
         self.create_nml()
 
         # Run the forecast
-        self.parallel_run(self.config.static.copy.fv3_exec[0])
+        if not dry_run:
+            self.parallel_run(self.config.static.copy.fv3_exec[0])
 
     def create_diag_table(self):
 
