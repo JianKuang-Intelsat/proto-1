@@ -9,16 +9,15 @@ halo_boundary: 4
 
 # Paths
 paths:
-  ushdir: '{n.homerrfs}/ush'
   workdir: '{n.exptdir}/{cycle}'
   templates: '{n.ushdir}/templates'
   ccpp_phys_suite: '{n.homerrfs}/FV3/ccpp/suites'
   fv3_exec: '{n.fv3_model}/tests'
-  grid: '{n.configdir}/fv3_grids.yml'
-  machine: '{n.configdir}/fv3_grids.yml'
-  namelist: '{n.configdir}/fv3_nml.yml'
-  diag_tmpl: '{n.templates}/templates/fv3_diag_table.{n.phys_pkg}'
-  base_nml: '{n.templates}/templates/input.nml.FV3'
+  grid: '{n.homerrfs}/configs/fv3_grids.yml'
+  machine: '{n.homerrfs}/configs/machines.yml'
+  namelist: '{n.homerrfs}/configs/fv3_nml.yml'
+  diag_tmpl: '{n.ushdir}/templates/fv3_diag_table.{n.phys_pkg}'
+  base_nml: '{n.ushdir}/templates/input.nml.FV3'
 
 model_config:
   # List of items to include in the model_config. Possible items can be a string

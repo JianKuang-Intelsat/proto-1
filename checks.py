@@ -32,7 +32,7 @@ def load_config_section(arg):
 
     # Load the YAML file into a dictionary
     with open(file_name, 'r') as fn:
-        cfg = yaml.load(fn, Loader=yaml.SafeLoader)
+        cfg = yaml.load(fn, Loader=yaml.Loader)
 
     err_msg = 'Section {section_name} does not exist in top level of {file_name}'
     if section_name:
@@ -47,9 +47,9 @@ def load_config_section(arg):
                 try:
                     cfg = cfg[sect.lower()]
                 except:
-                    raise KeyError(err_msg.format(sect, file_name))
+                    raise KeyError(err_msg.format(section_name=sect, file_name=file_name))
 
-    return cfg
+    return [cfg, section_name]
 
 def load_config_file(arg):
 
@@ -62,7 +62,10 @@ def load_config_file(arg):
     arg = file_exists(arg)
 
     # Load the yaml config and return the Python dict
-    return yaml.safe_load(arg)
+    with open(arg, 'r') as fn:
+        ret = yaml.safe_load(fn)
+
+    return ret
 
 def load_str(arg):
 

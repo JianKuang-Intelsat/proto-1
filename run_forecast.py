@@ -53,14 +53,13 @@ def parse_args():
 
     parser.add_argument('-s', '--script_config',
                         help='Full path to a YAML script config file',
-                        type=checks.load_config_section,
+                        type=checks.load_config_file,
                         )
 
     parser.add_argument('--overwrite',
                         action='store_true',
                         help='If included, overwrites the current working \
                         directory. Otherwise, exits on existence of workdir',
-                        type=checks.load_config_file,
                         )
 
     # Optional - switches
@@ -85,7 +84,9 @@ def main(cla):
     # ----------------------------------------------------
     user_config = cla.user_config
 
+    print(f"user config: {user_config}")
     script_config = cla.script_config
+    print(f"script config: {script_config}")
     if not script_config:
         ushdir = os.path.join(user_config['paths']['homerrfs'], 'configs')
         script_config = checks.load_config_file(

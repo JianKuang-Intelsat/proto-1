@@ -68,26 +68,21 @@ def update_dict(base, updates, quiet=False):
         The base dict is updated in place.
     '''
 
-    if not updates:
+    if not isinstance(base, dict) or not isinstance(updates, dict):
         return
 
-    for sect, values in updates.items():
-        # If section is set to None, remove all contents from namelist
-        if values is None:
-            base[sect] = {}
+    for key, value in updates.items():
+        # If key is set to None, remove it from the dict
+        if value is None:
+            _ = base[key].pop(key, None)
+
+        # If it's a layered dict, recursively call update_dict
+        elif isinstance(value, dict) and isinstance(base[key], dict):
+            update_dict(base, value, quiet=quiet)
+
+        # Update dictionary values
         else:
-            for key, value in values.items():
-                if not quiet:
-                    print(f'Setting {sect}.{key} = {value}')
+            if not quiet:
+                print(f'Setting {key} = {value}')
 
-                # Remove key from dict if config is set to None
-                if value is None:
-                    _ = base[sect].pop(key, None)
-                else:
-
-                    try:
-                        base[sect][key] = value
-                    except KeyError:
-                        # Namelist section did not exist. Create it and update the value.
-                        base[sect] = {}
-                        base[sect][key] = value
+            base.update({key: value})
