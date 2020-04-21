@@ -37,7 +37,7 @@ class BatchJob():
         cycle = self.starttime.strftime('%Y%m%d%H')
 
         workdir = self.config.paths.workdir.format(
-            n=self.config.paths,
+            n=self.config,
             cycle=cycle
             )
 
@@ -62,17 +62,18 @@ class BatchJob():
             raise ValueError(msg)
 
         if not isinstance(links, dict):
-            msg = 'link_static_files: links is type {type(links)}, expected dict.'
+            msg = f'link_static_files: links is type {type(links)}, expected dict.'
             raise ValueError(msg)
 
         n = self.config
+        starttime = self.starttime.strftime('%Y%m%d%H')
 
         files = []
         for path_name, filelist in links.items():
 
-            path_dir = n.paths.__dict__.get(
+            path_dir = vars(n.paths).get(
                 path_name,
-                self.machine.dirs.__dict__.get(path_name),
+                vars(self.machine.dirs).get(path_name),
                 )
 
             if not path_dir:
@@ -93,10 +94,12 @@ class BatchJob():
                 files.append((filepath, destination))
 
         for src, dst in files:
-            if action == 'copy':
-                utils.safe_link(src.format(n), dst.format(n))
             if action == 'link':
-                utils.safe_copy(src.format(n), dst.format(n))
+                print(f'Linking {src.format(n=n, starttime=starttime)} to {dst}')
+                utils.safe_link(src.format(n=n, starttime=starttime), dst)
+            if action == 'copy':
+                print(f'Copying {src.format(n=n, starttime=starttime)} to {dst}')
+                utils.safe_copy(src.format(n=n, starttime=starttime), dst)
 
     @staticmethod
     def create_yml(outfile, settings):
@@ -145,7 +148,7 @@ class Forecast(BatchJob):
 
         # Set of configuration Namespace objects.
         self.grid = self.config_namespace(kwargs.get('grid'))
-        self.nml = self.config_namespace(kwargs.get('nml'))
+        self.nml = kwargs.get('nml')
 
 
 
@@ -175,7 +178,7 @@ class Forecast(BatchJob):
         outfile = os.path.join(self.workdir, 'model_config')
         template = self.config.paths.diag_tmpl.format(n=self.config)
         template_vars = {
-            'res': self.config.res,
+            'res': self.grid.res,
             'starttime': self.starttime,
             }
         self.render_template(outfile, template, template_vars)
@@ -209,8 +212,8 @@ class Forecast(BatchJob):
                 # the value does not reference a local variable, then set it to
                 # the value provided in the config.
                 for key, value in item.items():
-                    var_val = locals().get(value).__dict__.get(key)
-                    value = var_val if var_val else value
+                    var_val = locals().get(value)
+                    value = var_val.__dict__.get(key, value) if var_val else value
                     value = f'.{str(value).lower()}' if isinstance(value, bool) else value
 
                     model_config[key] = var_val if var_val else value
@@ -231,7 +234,7 @@ class Forecast(BatchJob):
         mpi_tasks = self.grid.layout_x * self.grid.layout_y
 
         if self.config.quilting:
-            mpi_tasks += self.grid.write_groups * self.grid.write_tasks_per_group
+            mpi_tasks += self.grid.quilting.write_groups * self.grid.quilting.write_tasks_per_group
 
         # The number of processors will be used when running non-slurm
         # subprocess. Make note of it in the config.
@@ -244,7 +247,7 @@ class Forecast(BatchJob):
         ret = {'quilting': self.config.quilting}
 
         if self.config.quilting:
-            ret.update(self.grid.quilting)
+            ret.update(vars(self.grid.quilting))
 
         return ret
 
@@ -258,12 +261,15 @@ class Forecast(BatchJob):
         fv3_nml = os.path.join(self.workdir, 'input.nml')
 
         # Read in the namelist that has all the base settings.
-        base_nml = f90nml.read(self.config.paths.base_nml)
+        with open(self.config.paths.base_nml.format(n=self.config), 'r') as nml_file:
+            base_nml = f90nml.read(nml_file)
+
+        print(base_nml)
 
         # Update the base namelist with settings for the current configuration
         # Send self.nml, a Namespace object, as dict to update_dict.
         # Update_dict modifies dict in place.
-        utils.update_dict(base_nml, self.nml.__dict__)
+        utils.update_dict(base_nml, self.nml)
 
         with open(fv3_nml, 'w') as fn:
             base_nml.write(fn)
@@ -276,9 +282,21 @@ class Forecast(BatchJob):
             msg = f'stage_all: {section} is not in {allowed_sections}.'
             raise ValueError(msg)
 
-        n = self.config
-        links = self.config.static.link
-        copies = self.config.static.copy
+        file_section = vars(self.config).get(section)
 
+        n = self.config
+        g = self.grid
+
+        all_files = {
+                'copy': {},
+                'link': {},
+                }
+        for action in all_files.keys():
+            files_to_stage = vars(file_section).get(action)
+            if files_to_stage:
+                for path_name, filelist in vars(files_to_stage).items():
+                    all_files[action][path_name] = [[tmpl.format(n=n, g=g) for tmpl in filepair] for filepair in filelist]
+
+        print(all_files)
         for action in ['copy', 'link']:
-            self.stage_files(action, self.config.static.__dict__.get(action, {}))
+            self.stage_files(action, all_files[action])

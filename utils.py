@@ -72,17 +72,19 @@ def update_dict(base, updates, quiet=False):
         return
 
     for key, value in updates.items():
+        print(key, value)
         # If key is set to None, remove it from the dict
         if value is None:
             _ = base[key].pop(key, None)
 
         # If it's a layered dict, recursively call update_dict
         elif isinstance(value, dict) and isinstance(base[key], dict):
-            update_dict(base, value, quiet=quiet)
+            update_dict(base[key], value, quiet=quiet)
 
         # Update dictionary values
         else:
-            if not quiet:
-                print(f'Setting {key} = {value}')
+            base[key] = value
 
-            base.update({key: value})
+            if not quiet:
+                print(f'Setting {base[key]} = {value}')
+

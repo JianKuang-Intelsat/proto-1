@@ -109,6 +109,7 @@ GSD_HRRR3km:
     dely: &hrrr3_dely 3000.0
     nx: 1734
     ny: 1008
+    res: 3343
     wide_halo_width: 6
     dt_atmos: 40
     layout_x: 34
@@ -136,6 +137,7 @@ GSD_HRRR25km:
     dely: &hrrr25_dely 25000.0
     nx: 200
     ny: 110
+    res: 401
     wide_halo_width: 6
     dt_atmos: 300
     layout_x: 2

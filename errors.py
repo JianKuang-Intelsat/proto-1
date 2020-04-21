@@ -5,3 +5,6 @@ class Error(Exception):
 
 class DirectoryExists(Error):
     pass
+
+class FileNotFound(Error):
+    pass

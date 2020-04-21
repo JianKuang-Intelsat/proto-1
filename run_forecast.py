@@ -95,7 +95,7 @@ def main(cla):
 
     # Update script config with user-supplied config file
     # ----------------------------------------------------
-    utils.update_dict(script_config, user_config)
+    utils.update_dict(script_config, user_config, quiet=cla.quiet)
 
     # Create Namespace of config for easier syntax
     # ---------------------------------------------
@@ -137,21 +137,22 @@ def main(cla):
     # Update each of the provided configure files with user-supplied settings
     # ------------------------------------------------------------------------
     for cfg in ['grid', 'machine', 'namelist']:
-        utils.update_dict(locals()[cfg], script_config.get(cfg), quiet=cla.quiet)
+        utils.update_dict(locals()[cfg][0], script_config.get(cfg), quiet=cla.quiet)
+
 
     # Set up a kwargs dict for Forecast object
     # -----------------------------------------
     fcst_kwargs = {
-        'grid': grid,
-        'nml': namelist,
+        'grid': grid[0],
+        'nml': namelist[0],
         'overwrite': cla.overwrite,
         }
 
     # Create the Forecast object
     # ---------------------------
     fcst = Forecast(
-        config=config,
-        machine=machine,
+        config=script_config,
+        machine=machine[0],
         starttime=cla.start_date,
         **fcst_kwargs,
         )
