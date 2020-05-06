@@ -1,0 +1,16 @@
+wcoss:
+  run_command: 'mpirun -np {n.nproc}'
+  ncores_per_node: ''
+  dirs:
+    fixam: "/gpfs/hps3/emc/global/noscrub/emc.glopara/git/fv3gfs/fix/fix_am"
+    sfc_climo_input_dir: "/scratch1/NCEPDEV/da/George.Gayno/ufs_utils.git/climo_fields_netcdf"
+    topo_dir: "/gpfs/hps/emc/global/noscrub/emc.glopara/svn/fv3gfs/fix/fix_orog"
+
+hera:
+  run_command: srun
+  ncores_per_node: 24
+  sched: slurm
+  dirs:
+    fixam: "/scratch1/NCEPDEV/global/glopara/fix/fix_am"
+    sfc_climo_input_dir: "/scratch1/NCEPDEV/da/George.Gayno/ufs_utils.git/climo_fields_netcdf"
+    topo_dir: "/scratch1/NCEPDEV/global/glopara/fix/fix_orog"

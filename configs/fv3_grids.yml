@@ -1,0 +1,291 @@
+GSD_HAFSV0.A3km:
+  JPgrid: &gsd_hafs_3km
+    lon_ctr: &hafs_lon_ctr -62.0
+    lat_ctr: &hafs_lat_ctr 22.0
+    delx: 3000.0
+    dely: 3000.0
+    nx: 2880
+    ny: 1920
+    wide_halo_width: 6
+    dt_atmos: 40
+    layout_x: 32
+    layout_y: 24
+    blocksize: 32
+    quilting: &gsd_hafs_quilting
+      write_groups: 1
+      write_tasks_per_group: 32
+      output_grid: regional_latlon
+      cen_lon: *hafs_lon_ctr
+      cen_lat: 25.0
+      lon1: -114.5
+      lat1: -5.0
+      lon2: -9.5
+      lat2: 55.0
+      dlon: 0.03
+      dlat: 0.03
+
+GSD_HAFSV0.A13km:
+  JPgrid:
+    <<: *gsd_hafs_3km
+    delx: 13000.0
+    dely: 13000.0
+    nx: 665
+    ny: 444
+    dt_atmos: 180
+    layout_x: 19
+    layout_y: 12
+    blocksize: 35
+    quilting:
+      <<: *gsd_hafs_quilting
+      dlon: 0.13
+      dlat: 0.13
+
+GSD_HAFSV0.A25km:
+  JPgrid:
+    <<: *gsd_hafs_3km
+    delx: 25000.0
+    dely: 25000.0
+    nx: 345
+    ny: 230
+    dt_atmos: 300
+    layout_x: 5
+    layout_y: 5
+    blocksize: 6
+    quilting:
+      <<: *gsd_hafs_quilting
+      dlon: 0.25
+      dlat: 0.25
+
+GSD_RAP13km:
+  GFDLgrid:
+    lon_t6_ctr: &rap_lon_ctr -106.0
+    lat_t6_ctr: &rap_lat_ctr 54.0
+    stretch_fac: 0.63
+    res: 384
+    refine_ratio: 3
+    istart_of_rgnl_dom_on_t6g: 11 # num margin cells on left + 1
+    iend_of_rgnl_dom_on_t6g: 374  # GFDLgrid_RES - num margin cells on right
+    jstart_of_rgnl_dom_on_t6g: 11 # cells on bottom + 1
+    jend_of_rgnl_dom_on_t6g: 374  # GFDLgrid_RES - num margin cells on top
+    use_gfdlgrid_res_in_filenames: FALSE
+    dt_atmos: 90
+    layout_x: 14
+    layout_y: 14
+    blocksize: 26
+
+    quilting: &rap_quilting
+      write_groups: 1
+      write_tasks_per_group: 14
+      output_grid: rotated_latlon
+      cen_lon: *rap_lon_ctr
+      cen_lat: *rap_lat_ctr
+      lon1: -57.9926
+      lat1: -50.74344
+      lon2: 57.99249
+      lat2: 50.74344
+      dlon: 0.1218331
+      dlat: 0.121833
+  JPgrid:
+    lon_ctr: *rap_lon_ctr
+    lat_ctr: *rap_lat_ctr
+    delx: 13000.0
+    dely: 13000.0
+    nx: 960
+    ny: 960
+    wide_halo_WIDTH: 6
+    dt_atmos: 90
+    layout_x: 16
+    layout_y: 16
+    blocksize: 30
+    quilting:
+      <<: *rap_quilting
+      write_tasks_per_group: 16
+
+GSD_HRRR3km:
+  JPgrid: &gsd_hrrr
+    lon_ctr: &hrrr_lon_ctr -97.5
+    lat_ctr: &hrrr_lat_ctr 38.5
+    delx: &hrrr3_delx 3000.0
+    dely: &hrrr3_dely 3000.0
+    nx: 1734
+    ny: 1008
+    res: 3343
+    wide_halo_width: 6
+    dt_atmos: 40
+    layout_x: 34
+    layout_y: 24
+    blocksize: 34
+    quilting: &gsd_hrrr_quilting
+      write_groups: 1
+      write_tasks_per_group: 24
+      output_grid: lambert_conformal
+      cen_lon: *hrrr_lon_ctr
+      cen_lat: *hrrr_lat_ctr
+      stdlat1: *hrrr_lat_ctr
+      stdlat2: *hrrr_lat_ctr
+      nx: 1738
+      ny: 974
+      lon1: -122.21414225
+      lat1: 22.41403305
+      dx: *hrrr3_delx
+      dy: *hrrr3_dely
+
+GSD_HRRR25km:
+  JPgrid:
+    <<: *gsd_hrrr
+    delx: &hrrr25_delx 25000.0
+    dely: &hrrr25_dely 25000.0
+    nx: 200
+    ny: 110
+    res: 401
+    wide_halo_width: 6
+    dt_atmos: 300
+    layout_x: 2
+    layout_y: 2
+    blocksize: 2
+    quilting:
+      <<: *gsd_hrrr_quilting
+      write_groups: 1
+      write_tasks_per_group: 2
+      output_grid: lambert_conformal
+      nx: 191
+      ny: 97
+      lon1: -120.72962370
+      lat1: 25.11648583
+      dx: *hrrr25_delx
+      dy: *hrrr25_dely
+
+GSD_HRRR13km:
+  JPgrid:
+    <<: *gsd_hrrr
+    delx: &hrrr13_delx 13000.0
+    dely: &hrrr13_dely 13000.0
+    nx: 390
+    ny: 210
+    dt_atmos: 180
+    layout_x: 10
+    layout_y: 10
+    blocksize: 39
+    quilting:
+      <<: *gsd_hrrr_quilting
+      write_tasks_per_group: 10
+      output_grid: lambert_conformal
+      nx: 383
+      ny: 195
+      lon1: -121.58647982
+      lat1: 24.36006861
+      dx: *hrrr13_delx
+      dy: *hrrr13_dely
+
+EMC_CONUS_3km:
+  GFDLgrid: &emc_conus_gfdl
+    lon_t6_ctr: &emc_conus_lon_ctr -97.5
+    lat_t6_ctr: &emc_conus_lat_ctr 38.5
+    stretch_fac: 1.5
+    res: 768
+    refine_ratio: 3
+    istart_of_rgnl_dom_on_t6g: 62 # num margin cells on left + 1
+    iend_of_rgnl_dom_on_t6g: 701  # GFDLgrid_RES - num margin cells on right
+    jstart_of_rgnl_dom_on_t6g: 166 # cells on bottom + 1
+    jend_of_rgnl_dom_on_t6g: 597 # GFDLgrid_RES - num margin cells on top
+    use_gfdlgrid_res_in_filenames: TRUE
+    dt_atmos: 18
+    layout_x: 16
+    layout_y: &emc_conus_layout_y 72
+    blocksize: 32
+    quilting: &emc_conus_quilting
+      write_groups: 1
+      write_tasks_per_group: *emc_conus_layout_y
+      output_grid: rotated_latlon
+      cen_lon: *emc_conus_lon_ctr
+      cen_lat: *emc_conus_lat_ctr
+      lon1: -25.0
+      lat1: -15.0
+      lon2: 25.0
+      lat2: 15.0
+      dlon: 0.02
+      dlat: 0.02
+  JPgrid:
+    lon_ctr: *emc_conus_lon_ctr
+    lat_ctr: *emc_conus_lat_ctr
+    delx: 3000.0
+    dely: 3000.0
+    nx: 960
+    ny: 960
+    wide_halo_width: 6
+
+EMC_CONUS_coarse:
+  GFDLgrid:
+    <<: *emc_conus_gfdl
+    res: 96
+    refine_ratio: 3
+    istart_of_rgnl_dom_on_t6g: 12 # num margin cells on left + 1
+    iend_of_rgnl_dom_on_t6g: 85  # GFDLgrid_RES - num margin cells on right
+    jstart_of_rgnl_dom_on_t6g: 17 # cells on bottom + 1
+    jend_of_rgnl_dom_on_t6g: 84 # GFDLgrid_RES - num margin cells on top
+    dt_atmos: 225
+    layout_x: 6
+    layout_y: &emc_conus_coarse_layout_y 4
+    blocksize: 37
+    quilting:
+      <<: *emc_conus_quilting
+      write_tasks_per_group: *emc_conus_coarse_layout_y
+      dlon: 0.24
+      dlat: 0.24
+
+EMC_AK:
+  GFDLgrid:
+    <<: *emc_conus_gfdl
+    lon_t6_ctr: &emc_ak_lon_t6_ctr -153.0
+    lat_t6_ctr: &emc_ak_lat_t6_ctr 61.0
+    stretch_fac: 1.0  # ???
+    layout_y: 48
+    blocksize: 32
+    quilting:
+      write_groups: 2
+      write_tasks_per_group: 24
+
+GSD_HRRR_AK_3km:
+  JPgrid: &gsd_hrrr_ak_3km
+    <<: *gsd_hrrr
+    lon_ctr: &gsd_hrrr_ak_lon_ctr -163.5 #HRRR-AK is -163.5.
+    lat_ctr: &gsd_hrrr_ak_lat_ctr 62.8 #HRRR-AK is 60.8
+    nx: &gsd_hrrr_ak3_nx 1230 #HRRR-AK is 1300
+    ny: &gsd_hrrr_ak3_ny 850  #HRRR-AK is 920
+    dt_atmos: 50
+    layout_x: 30
+    layout_y: 17
+    blocksize: 25
+    quilting: &gsd_hrrr_ak_quilting
+      write_groups: 1
+      write_tasks_per_group: 2
+      output_grid: lambert_conformal
+      cen_lon: *gsd_hrrr_ak_lon_ctr
+      cen_lat: *gsd_hrrr_ak_lat_ctr
+      stdlat1: *gsd_hrrr_ak_lat_ctr
+      stdlat2: *gsd_hrrr_ak_lat_ctr
+      nx: 1169
+      ny: 762
+      lon1: 172.0
+      lat1: 49.0
+      dx: *gsd_hrrr_ak3_nx
+      dy: *gsd_hrrr_ak3_ny
+
+GSD_HRRR_AK_50km:
+  JPgrid:
+    <<: *gsd_hrrr_ak_3km
+    delx: 50000.0
+    dely: 50000.0
+    nx: 74
+    ny: 51
+    dt_atmos: 600
+    layout_x: 2
+    layout_y: 3
+    blocksize: 37
+    quilting:
+      <<: *gsd_hrrr_ak_quilting
+      write_groups: 1
+      write_tasks_per_group: 1
+      output_grid: lambert_conformal
+      nx: 70
+      ny: 45
