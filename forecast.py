@@ -87,7 +87,7 @@ class BatchJob():
                 filepath = os.path.join(path_dir, src_dst[0])
 
                 # Last item of list will be the name of the destination
-                dest_name = os.path.basename(src_dst[-1])
+                dest_name = src_dst[-1]
                 destination = os.path.join(self.workdir, dest_name)
 
                 # Add the processed src_dst to the filelist
@@ -147,14 +147,33 @@ class Forecast(BatchJob):
         BatchJob.__init__(self, config, machine, starttime, **kwargs)
 
         # Set of configuration Namespace objects.
-        self.grid = self.config_namespace(kwargs.get('grid'))
-        self.nml = kwargs.get('nml')
+        grid = self.config_namespace(kwargs.get('grid'))
+        self.grid = grid
 
+        self.nml = {}
+        for sect, keys in kwargs.get('nml', {}).items():
+            self.nml[sect] = {}
+            for key, value in keys.items():
+                if isinstance(value, str):
+                    try:
+                        tmp = value.format(grid=self.grid, n=self.config)
 
+                    except AttributeError:
+                        tmp = eval("f'{}'".format(value))
+
+                    self.nml[sect][key] = utils.to_number(tmp)
+
+                elif isinstance(value, list):
+                    tmp = [v.format(grid=self.grid, n=self.config) for v in value]
+                    self.nml[sect][key] = [utils.to_number(v) for v in tmp]
+                else:
+                    self.nml[sect][key] = value
 
     def run(self, dry_run=False):
 
-        # Create workdir (currently handled by J-JOB, is that NCO-necessary?)
+        # Create INPUT dir
+        os.makedirs(os.path.join(self.workdir, 'INPUT'))
+        os.makedirs(os.path.join(self.workdir, 'RESTART'))
 
         # Link/copy in static and cycle dependent files
         for section in ['static', 'cycledep']:
@@ -175,7 +194,7 @@ class Forecast(BatchJob):
 
     def create_diag_table(self):
 
-        outfile = os.path.join(self.workdir, 'model_config')
+        outfile = os.path.join(self.workdir, 'diag_table')
         template = self.config.paths.diag_tmpl.format(n=self.config)
         template_vars = {
             'res': self.grid.res,
@@ -186,7 +205,7 @@ class Forecast(BatchJob):
     def create_model_config(self):
 
         # Output file
-        model_config_out = os.path.join(self.workdir, 'model_config')
+        model_config_out = os.path.join(self.workdir, 'model_configure')
 
         # Aliasing object variables for consistency with YAML
         # pylint: disable=possibly-unused-variable
@@ -195,7 +214,7 @@ class Forecast(BatchJob):
         machine = self.machine
         # pylint: enable=possibly-unused-variable
 
-        # Start with config items set in fv3_script
+        # Start with config items set in fv3_script list
         model_config_items = config.model_config
 
         # Loop through each item and add it to the model_config dict
@@ -214,9 +233,9 @@ class Forecast(BatchJob):
                 for key, value in item.items():
                     var_val = locals().get(value)
                     value = var_val.__dict__.get(key, value) if var_val else value
-                    value = f'.{str(value).lower()}' if isinstance(value, bool) else value
+                    value = f'.{str(value).lower()}.' if isinstance(value, bool) else value
 
-                    model_config[key] = var_val if var_val else value
+                    model_config[key] = value
 
             else: # item is a single item string
                 try:
@@ -240,12 +259,15 @@ class Forecast(BatchJob):
         # subprocess. Make note of it in the config.
         self.config.__dict__['nproc'] = mpi_tasks
 
-        return {'pe_member01': mpi_tasks}
+        return {'PE_MEMBER01': mpi_tasks}
 
     def _quilting(self):
 
-        ret = {'quilting': self.config.quilting}
+        quilting = self.config.quilting
+        quilting = f'.{str(quilting).lower()}.' if isinstance(quilting, bool) else quilting
+        ret = {'quilting': quilting}
 
+        # Add the grid section to the returned dict.
         if self.config.quilting:
             ret.update(vars(self.grid.quilting))
 
@@ -253,7 +275,7 @@ class Forecast(BatchJob):
 
     def _start_times(self):
         times = ['year', 'month', 'day', 'hour', 'minute', 'second']
-        return {f'start_{t}': f'{self.starttime.__getattribute__(t):02d}' for t in times}
+        return {f'start_{t}': int(self.starttime.__getattribute__(t)) for t in times}
 
 
     def create_nml(self):
@@ -264,7 +286,6 @@ class Forecast(BatchJob):
         with open(self.config.paths.base_nml.format(n=self.config), 'r') as nml_file:
             base_nml = f90nml.read(nml_file)
 
-        print(base_nml)
 
         # Update the base namelist with settings for the current configuration
         # Send self.nml, a Namespace object, as dict to update_dict.
@@ -273,6 +294,16 @@ class Forecast(BatchJob):
 
         with open(fv3_nml, 'w') as fn:
             base_nml.write(fn)
+
+    def namsfc_files(self):
+
+        '''
+        A "callable" used by stage_all. Must return a list of lists. 
+        Returns the list of namsfc files from the namelist section.
+        '''
+
+        filedict = vars(self.config.namelist.namsfc)
+        return [[fn] for key, fn in filedict.items() if key[:2] == 'fn' and len(fn.split('.')) > 1]
 
 
     def stage_all(self, section):
@@ -291,12 +322,33 @@ class Forecast(BatchJob):
                 'copy': {},
                 'link': {},
                 }
+
         for action in all_files.keys():
             files_to_stage = vars(file_section).get(action)
             if files_to_stage:
-                for path_name, filelist in vars(files_to_stage).items():
-                    all_files[action][path_name] = [[tmpl.format(n=n, g=g) for tmpl in filepair] for filepair in filelist]
+                for path_name, files in vars(files_to_stage).items():
 
-        print(all_files)
+
+                    all_files[action][path_name] = []
+
+                    for list_item in files:
+
+                        # files_to_stage items can either be a list or a callable
+                        if isinstance(list_item, list):
+                            all_files[action][path_name].append([tmpl.format(n=n, g=g) for tmpl in list_item])
+
+                        elif callable(self.__getattribute__(list_item)):
+
+                            # Note: any callable function supported by this functionality must return a list of lists, as
+                            # expected by the all_files dict.
+                            all_files[action][path_name].extend(self.__getattribute__(list_item)())
+
+                        else:
+
+                            msg = f'stage_all: {list_item} in {path_name} is not a list or callable!'
+                            raise errors.InvalidConfigSetting(msg)
+
+
+
         for action in ['copy', 'link']:
             self.stage_files(action, all_files[action])

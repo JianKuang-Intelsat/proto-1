@@ -8,3 +8,6 @@ class DirectoryExists(Error):
 
 class FileNotFound(Error):
     pass
+
+class InvalidConfigSetting(Error):
+    pass
