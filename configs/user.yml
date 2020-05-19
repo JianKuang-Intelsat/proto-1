@@ -1,5 +1,5 @@
 grid_name: GSD_HRRR25km
-nhours_fcst: 12
+nhours_fcst: 6
 phys_pkg: FV3_GSD_SAR
 
 paths:
@@ -7,8 +7,10 @@ paths:
   homerrfs: '/scratch2/BMC/wrfruc/cholt/repos/proto-1'
   exptdir: '/scratch2/BMC/wrfruc/cholt/test_proto'
   ushdir: '/scratch2/BMC/wrfruc/cholt/repos/proto-1'
-  input: '/scratch2/BMC/wrfruc/cholt/repos/expt_dirs/regional_004/{starttime}/INPUT'
-  fixsar: '/scratch2/BMC/wrfruc/cholt/repos/expt_dirs/regional_004/fix_sar'
-  fixam: '/scratch2/BMC/wrfruc/cholt/repos/expt_dirs/regional_004/fix_am'
+  input: '/scratch2/BMC/wrfruc/cholt/repos/expt_dirs_crh/regional_004/{starttime}/INPUT'
+  fixsar: '/scratch2/BMC/wrfruc/cholt/repos/expt_dirs_crh/regional_004/fix_sar'
+  fixam: '/scratch2/BMC/wrfruc/cholt/repos/expt_dirs_crh/regional_004/fix_am'
+  orodata: '/scratch2/BMC/wrfruc/cholt/repos/expt_dirs_crh/regional_004/orog'
+  griddata: '/scratch2/BMC/wrfruc/cholt/repos/expt_dirs_crh/regional_004/grid'
 
 machine: hera

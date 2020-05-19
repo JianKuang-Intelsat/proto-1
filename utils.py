@@ -48,6 +48,20 @@ def safe_link(src, dst):
 
     os.symlink(src, dst)
 
+def to_number(string):
+
+
+    if string.isnumeric():
+        return int(string)
+
+    try:
+        ret = float(string)
+    except ValueError:
+        # Evaluate as f-string
+        ret = eval("f'{}'".format(string))
+
+    return ret
+
 def update_dict(base, updates, quiet=False):
 
     '''
@@ -78,7 +92,7 @@ def update_dict(base, updates, quiet=False):
             _ = base[key].pop(key, None)
 
         # If it's a layered dict, recursively call update_dict
-        elif isinstance(value, dict) and isinstance(base[key], dict):
+        elif isinstance(value, dict) and isinstance(base.get(key), dict):
             update_dict(base[key], value, quiet=quiet)
 
         # Update dictionary values
